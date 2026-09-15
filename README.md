@@ -1,8 +1,10 @@
 # OSINTeusz 2 — English edition
 
-OSINTeusz is a fictional, browser-based OSINT investigation for cybersecurity education. Students explore simulated search results and social profiles, record six facts, and unlock a local SHA-256 candidate-list demonstration.
+OSINTeusz is a fictional, browser-based OSINT investigation for cybersecurity education. Students explore simulated search results and social profiles, record six facts, and unlock a local simulation of a Hashcat SHA-256 dictionary attack.
 
 Everything runs in the browser. There is no database, login, analytics service, API, or server-side state.
+
+The hash lab mirrors the Linux command `hashcat -m 1400 -a 0 leaked.hash password_candidates.txt`, but does not run Hashcat or touch any external system. The browser computes the supplied fictional candidates locally with Web Crypto.
 
 ## Publish on GitHub Pages
 
