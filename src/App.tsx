@@ -200,7 +200,7 @@ function HashLab({ onClose }: { onClose: () => void }) {
     <div className="lab-overlay" role="dialog" aria-modal="true" aria-labelledby="lab-title">
       <section className="hash-lab">
         <button className="lab-close" onClick={onClose} disabled={status === "running"} aria-label="Close hash lab">×</button>
-        <header><span className="lab-kicker">LOCAL EDUCATIONAL SIMULATION</span><h2 id="lab-title">Candidate-list hash lab</h2><p>Your browser compares only the fictional exercise's SHA-256 hash with hashes computed locally from the supplied candidates.</p></header>
+        <header><span className="lab-kicker">LOCAL EDUCATIONAL SIMULATION</span><h2 id="lab-title">Hashcat dictionary attack</h2><p>Your browser runs a small local simulation of a Linux Hashcat dictionary attack against the fictional exercise's SHA-256 hash.</p></header>
         <div className="leak-strip"><span>Affected address</span><b>{LEAK_EMAIL}</b><span>SHA-256</span><code>{LEAK_HASH}</code></div>
         <div className="lab-grid">
           <aside className="candidate-panel">
@@ -208,17 +208,17 @@ function HashLab({ onClose }: { onClose: () => void }) {
             <div className="candidate-list">{PASSWORD_CANDIDATES.map((candidate, index) => <div className={progress === index + 1 ? "candidate-current" : progress > index + 1 ? "candidate-done" : ""} key={`${candidate}-${index}`}><span>{String(index + 1).padStart(3, "0")}</span><code>{candidate}</code></div>)}</div>
           </aside>
           <section className="hash-terminal">
-            <div className="terminal-head"><span /><span /><span /><b>sha256-demo — local process</b></div>
+            <div className="terminal-head"><span /><span /><span /><b>hashcat — raw SHA-256 / dictionary attack</b></div>
             <div className="terminal-body">
-              <p><i>$</i> target --email {LEAK_EMAIL}</p><p><i>$</i> load password_candidates.txt <em>[{PASSWORD_CANDIDATES.length} candidates]</em></p>
-              {status === "ready" && <div className="terminal-idle">The list combines common passwords with targeted variations derived from the OSINT investigation.</div>}
+              <p><i>$</i> printf '%s\n' '<em>{LEAK_HASH}</em>' &gt; leaked.hash</p><p><i>$</i> hashcat -m 1400 -a 0 leaked.hash password_candidates.txt</p>
+              {status === "ready" && <div className="terminal-idle"><b>Linux command explained</b><span><code>-m 1400</code> selects raw SHA-256. <code>-a 0</code> tests each wordlist candidate directly.</span></div>}
               {attempts.map((attempt, index) => <div className={`hash-row ${attempt.match ? "hash-match" : ""}`} key={`${attempt.candidate}-${index}`}><code>{attempt.candidate}</code><span>→</span><code>{attempt.hash}</code><b>{attempt.match ? "MATCH" : "≠"}</b></div>)}
-              {status === "running" && <div className="cursor-line"><i>$</i> hashing… <span className="cursor" /></div>}
-              {status === "cracked" && <div className="cracked-box"><span>HASH MATCH</span><p>Password found in the demonstration:</p><strong>{found}</strong></div>}
+              {status === "running" && <div className="cursor-line"><i>$</i> hashcat is testing candidates… <span className="cursor" /></div>}
+              {status === "cracked" && <div className="cracked-box"><span>HASHCAT MATCH</span><p>Hashcat would report:</p><strong>{LEAK_HASH}:{found}</strong></div>}
             </div>
             <div className="progress-track"><span style={{ width: `${(progress / PASSWORD_CANDIDATES.length) * 100}%` }} /></div>
             <footer><b>{progress}/{PASSWORD_CANDIDATES.length}</b><span>{status === "running" ? "hashing candidates…" : status === "cracked" ? "demonstration complete" : "ready to start"}</span></footer>
-            <button className="crack-button" onClick={start} disabled={status === "running"}>{status === "running" ? "Calculating hashes…" : status === "cracked" ? "Restart demonstration" : "Test candidate list"}</button>
+            <button className="crack-button" onClick={start} disabled={status === "running"}>{status === "running" ? "Running Hashcat simulation…" : status === "cracked" ? "Restart demonstration" : "Run Hashcat simulation"}</button>
           </section>
         </div>
         <aside className="ethics-note">This is an educational demonstration. Use only the fictional hash supplied with the exercise; never test real accounts, passwords, or systems.</aside>
